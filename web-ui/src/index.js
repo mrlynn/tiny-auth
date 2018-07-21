@@ -16,21 +16,29 @@ import {
   Stitch,
   UserPasswordCredential,
   FacebookRedirectCredential,
-  GoogleRedirectCredential
+  GoogleRedirectCredential,
+  StitchAppClientConfiguration
 } from 'mongodb-stitch-browser-sdk'
-const APP_ID = 'tiny-auth-cornj'
+const APP_ID = 'tiny-auth-chajf'; 
+/* DEV */
+const BASE_URL = 'http://stitch-dev.mongodb.com';
+/* PROD
+const BASE_URL = 'http://stitch.mongodb.com';
+*/
 
 class StitchApp extends Component {
   static propTypes = {
-    appId: PropTypes.string.isRequired
+    appId: PropTypes.string.isRequired,
+    baseUrl: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props)
-    this.appId = props.appId
-    this.client = Stitch.initializeDefaultAppClient(this.appId)
-
-    const isAuthed = this.client.auth.isLoggedIn
+    this.appId = props.appId;
+    this.baseUrl = props.baseUrl
+    this.config = new StitchAppClientConfiguration.Builder().withBaseUrl(this.baseUrl).build()
+    this.client = Stitch.initializeAppClient(this.appId,this.config);
+    const isAuthed = this.client.auth.isLoggedIn;
     this.state = { isAuthed }
   }
 
@@ -87,5 +95,5 @@ class StitchApp extends Component {
   }
 }
 
-ReactDOM.render(<StitchApp appId={APP_ID} />, document.getElementById('root'))
+ReactDOM.render(<StitchApp appId={APP_ID} baseUrl={BASE_URL} />, document.getElementById('root'))
 registerServiceWorker()
